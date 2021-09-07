@@ -1,3 +1,5 @@
+const Room = require("../modules/models/Room")
+
 const dices = [[ // yellow
   "Bon écoutez-moi !",
   "Tu vas pas me croire",
@@ -172,7 +174,6 @@ const themes  = {
     "65": "C'était un scir d'automne",
   }
 }
-
 function  Theme() {
 }
 
@@ -214,5 +215,4 @@ Theme.prototype.clickOnWord = function (wordIndex) {
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
-
 module.exports = Theme

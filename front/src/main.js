@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Socket from './services/Socket'
+import {initRoomLib} from './RoomLib/index'
 
 Vue.use(VueRouter);
 
@@ -20,20 +20,7 @@ const router = new VueRouter({
   mode: 'history',
   routes
 })
-
-router.beforeEach((to, from, next) => {
-  if (to.name !== 'game' && from.name === 'game') {
-    const answer = window.confirm("Voulez vous vous deconnecter ?")
-    if (answer) {
-      Socket.socket.emit('leave room', from.params.room)
-      Socket.socket.emit('updateUser', {roomId: from.params.room})
-      next()
-    } else {
-      next(false)
-    }
-  }else next()
-})
-
+initRoomLib({router})
 new Vue({
   render: h => h(App),
   router

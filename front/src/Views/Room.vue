@@ -1,7 +1,7 @@
 <template>
-  <div id="main" v-if="room.theme">
+  <div id="main" v-if="room.game">
     <transition name="fade">
-      <div v-if="!room.theme.choices && !room.theme.letter && isAdmin">
+      <div v-if="!room.game.choices && !room.game.letter && isAdmin">
         <h2>Choisissez une lettre:</h2>
         <div class="letters">
           <div class="line">
@@ -14,16 +14,16 @@
           </div>
         </div>
       </div>
-      <div v-else-if="!room.theme.choices && !room.theme.numbers && isAdmin">
+      <div v-else-if="!room.game.choices && !room.game.numbers && isAdmin">
         <h2>Trouver des thèmes</h2>
         <dice :nbDices="2" @roll="roll"/>
       </div>
-      <div v-else-if="!isAdmin && !room.theme.choices">
+      <div v-else-if="!isAdmin && !room.game.choices">
         <h2>Le créateur choisi un thème. <br><br>Veuillez patienter...</h2>
       </div>
-      <div v-else-if="!room.theme.choice">
+      <div v-else-if="!room.game.choice">
         <h2>Choisir un des thèmes</h2>
-        <div class="choices" v-for="choice of room.theme.choices" :key="choice.id" @click="chooseChoice(choice.id)">
+        <div class="choices" v-for="choice of room.game.choices" :key="choice.id" @click="chooseChoice(choice.id)">
           <div class="id">{{choice.id}}</div>
           <div class="column">
             <div class="theme">{{choice.theme}}</div>
@@ -31,12 +31,12 @@
           </div>
         </div>
       </div>
-      <div v-if="room.theme.choice && !success" class="game">
+      <div v-if="room.game.choice && !success" class="game">
         <section>
           <h2>Le thème est:</h2>
           <div class="theme-container">
             <div class="theme">
-              {{room.theme.choice}}
+              {{room.game.choice}}
             </div>
           </div>
         </section>
@@ -44,8 +44,8 @@
           <h2>Les mots à placer dans l'histoire sont: </h2>
           <div class="labels-container">
             <transition name="fade">
-            <div class="labels" v-if="room.theme.dices" :key="room.theme.dices[0]+room.theme.dices[1]+room.theme.dices[2]+room.theme.dices[3]+room.theme.dices[4]+room.theme.dices[4]+room.theme.dices[5]+room.theme.dices[6]">
-              <label  v-for="(dice, i) of room.theme.dices" :key="dice.label" class="label-container" :class="diceColors[i]" @click="clickOnWord(i)">
+            <div class="labels" v-if="room.game.dices" :key="room.game.dices[0]+room.game.dices[1]+room.game.dices[2]+room.game.dices[3]+room.game.dices[4]+room.game.dices[4]+room.game.dices[5]+room.game.dices[6]">
+              <label  v-for="(dice, i) of room.game.dices" :key="dice.label" class="label-container" :class="diceColors[i]" @click="clickOnWord(i)">
                 <div class="number">{{i}}</div>
                 <div class="label">{{dice.label}}</div>
                 <transition name="fade">
@@ -58,7 +58,7 @@
           </div>
         </section>
       </div>
-      <div v-else-if="room.theme.choice && success">
+      <div v-else-if="room.game.choice && success">
         <h2>Bravo !</h2>
         <br>
         <button @click="restart">Recommencer et devenir maître du jeu</button>
@@ -73,8 +73,8 @@
 
 <script>
 import DiceVue from '../components/Dice.vue';
-import Api from '../services/API'
-import Socket from '../services/Socket';
+import Room from '../services/Room'
+import {Socket} from '../RoomLib/index'
 export default {
   name: "Room",
   components: {
@@ -103,32 +103,32 @@ export default {
       return this.room.creatorId === this.username
     },
     success() {
-      return this.room && this.room.theme && this.room.theme.dices && this.room.theme.dices.every(dice => dice.isOk)
+      return this.room && this.room.game && this.room.game.dices && this.room.game.dices.every(dice => dice.isOk)
     }
   },
   async mounted() {
     if(!this.username) this.username = Math.random()
     this.room.id = this.$route.params.room;
-    this.room = await Api.getRoom(this.room.id)
-      .catch(() =>  Api.createRoom(this.username, this.room.id))
-    await Api.joinExistingRoom(this.room.id, this.username)
+    this.room = await Room.getRoom(this.room.id)
+      .catch(() =>  Room.createRoom(this.username, this.room.id))
+    await Room.joinExistingRoom(this.room.id, this.username)
     Socket.socket.emit('connectRoom', this.username, this.room.id)
   },
   methods: {
     restart() {
-      Api.restart(this.username, this.room.id)
+      Room.restart(this.username, this.room.id)
     },
     clickOnWord(wordIndex) {
-      Api.clickOnWord(this.username, this.room.id, wordIndex)
+      Room.clickOnWord(this.username, this.room.id, wordIndex)
     }, 
     goToHome() {
       this.$router.push({name: 'home'})
     },
     chooseLetter(letter) {
-      this.$set(this.room.theme, 'letter', letter)
+      this.$set(this.room.game, 'letter', letter)
     },
     roll(numbers) {
-      this.$set(this.room.theme, 'numbers', numbers)
+      this.$set(this.room.game, 'numbers', numbers)
       this.generateChoices()
     },
     isAdministrator() {
@@ -136,14 +136,14 @@ export default {
     },
     async chooseChoice(choiceId) {
       if(this.isAdministrator()) {
-        await Api.chooseChoice(this.username, this.room.id, this.room.theme.letter, choiceId)
-        return Api.launchDices(this.username, this.room.id)
+        await Room.chooseChoice(this.username, this.room.id, this.room.game.letter, choiceId)
+        return Room.launchDices(this.username, this.room.id)
       } else {
-        await Api.voteChoice(this.username, this.room.id, this.room.theme.letter, choiceId)
+        await Room.voteChoice(this.username, this.room.id, this.room.game.letter, choiceId)
       }
     },
     generateChoices() {
-      return Api.generateChoices(this.username, this.room.id, this.room.theme.letter, this.room.theme.numbers)
+      return Room.generateChoices(this.username, this.room.id, this.room.game.letter, this.room.game.numbers)
     },
   }
 };

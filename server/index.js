@@ -1,13 +1,14 @@
 process.title = "gnou"
 const express = require("express");
 const apiPath = require("./routes/api.js");
-const sockets = require('./services/sockets')
+const {sockets} = require('./modules')
 const cors = require('cors')
 const app = require('express')();
 const bodyParser = require('body-parser')
 const path = require('path')
 // App setup
 const PORT = process.env.PORT || 5000;
+console.log(PORT)
 
 app.use(cors());
 app.use(bodyParser.json());

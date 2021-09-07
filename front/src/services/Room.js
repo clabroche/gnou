@@ -1,28 +1,26 @@
-import Socket from './Socket'
-function Room(room) {
-  this.id = room.id
-  this.users = room.users
-  this.theme = room.theme
-  this.creatorId = room.creatorId
-  Socket.socket.on("update:users", users => {
-    if (users && Array.isArray(users)) {
-      return this.users = users
-    }
-    return this.users = [];
-  });
-  Socket.socket.on("update:theme", theme => {
-    if (theme) {
-      return this.theme = theme
-    }
-  })
-  Socket.socket.on("update:creatorId", creatorId => {
-    console.log('update creator')
-    if (creatorId) {
-      return this.creatorId = creatorId
-    }
-  });
-  Socket.socket.on("error", (data) => {
-    alert(data);
-  })
+import { Room, API} from '../RoomLib/index'
+
+class MyRoom extends Room {
+  static async launchDices(username, roomId) {
+    await API.instance.post(`/api/rooms/${username}/${roomId}/launch-dices`)
+  }
+  static async generateChoices(username, roomId, letter, numbers) {
+    await API.instance.post(`/api/rooms/${username}/${roomId}/generateChoices/${letter}/${numbers}`)
+  }
+  static async voteChoice(username, roomId, letter, number) {
+    await API.instance.post(`/api/rooms/${username}/${roomId}/voteChoice/${letter}/${number}`)
+  }
+  static async chooseChoice(username, roomId, letter, number) {
+    await API.instance.post(`/api/rooms/${username}/${roomId}/chooseChoice/${letter}/${number}`)
+  }
+  static async clickOnWord(username, roomId, wordIndex) {
+    await API.instance.post(`/api/rooms/${username}/${roomId}/click-on-word/${wordIndex}`)
+  }
+  static async restart(username, roomId) {
+    await API.instance.post(`/api/rooms/${username}/${roomId}/restart`)
+  }
 }
-export default Room
+
+
+
+export default  MyRoom

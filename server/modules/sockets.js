@@ -1,6 +1,6 @@
 const Socket = require('socket.io');
-const Rooms = require('./Rooms');
-const Users = require('./Users')
+const Rooms = require('./models/Rooms');
+const Users = require('./models/Users')
 module.exports = {
   /** @type {import('socket.io').Server} */
   io: null,
@@ -31,15 +31,15 @@ module.exports = {
   updateUsers(roomId, users) {
     this.io.to(roomId).emit('update:users', users)
   },
-  updateTheme(roomId, theme) {
-    this.io.to(roomId).emit('update:theme', theme)
+  updateGame(room) {
+    this.io.to(room.id).emit('update:game', room.game)
   },
   updateCreator(roomId, creatorId) {
     this.io.to(roomId).emit('update:creatorId', creatorId)
   },
   /**
    * @param {String} roomId 
-   * @param {import('./User')} user 
+   * @param {import('./models/User')} user 
    */
   joinRoom(roomId, user){
     if (user.socketId) {

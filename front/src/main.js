@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import {initRoomLib} from './RoomLib/index'
+import {initRoomLib} from '@iryu54/room-lib-front'
 
 Vue.use(VueRouter);
 

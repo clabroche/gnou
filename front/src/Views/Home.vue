@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import {API} from '../RoomLib/index'
+import {API} from '@iryu54/room-lib-front'
 export default {
   name: "Home",
   mounted() {

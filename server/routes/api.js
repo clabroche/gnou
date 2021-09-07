@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Theme = require('../services/theme')
-const {room} = require("../modules").controllers;
-const Room = require('../modules/models/Room')
+const {room} = require("@iryu54/room-lib-server").controllers;
+const {Room} = require('@iryu54/room-lib-server').models
 Room.Game = Theme
 
 router.get('/', (req, res, next) => {

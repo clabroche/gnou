@@ -1,4 +1,4 @@
-import { Room, API} from '../RoomLib/index'
+import { Room, API} from '@iryu54/room-lib-front'
 
 class MyRoom extends Room {
   static async launchDices(username, roomId) {

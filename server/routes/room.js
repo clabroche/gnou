@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {controllers, models, sockets} = require('../modules')
+const { controllers, models, sockets } = require('@iryu54/room-lib-server')
 const {roomBaseUrl} = controllers
 const {Rooms, Users} = models
 

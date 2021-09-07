@@ -1,4 +1,4 @@
-const Room = require("../modules/models/Room")
+const {Room} = require("@iryu54/room-lib-server").models
 
 const dices = [[ // yellow
   "Bon écoutez-moi !",

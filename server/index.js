@@ -1,7 +1,7 @@
 process.title = "gnou"
 const express = require("express");
 const apiPath = require("./routes/api.js");
-const {sockets} = require('./modules')
+const {sockets} = require('@iryu54/room-lib-server')
 const cors = require('cors')
 const app = require('express')();
 const bodyParser = require('body-parser')

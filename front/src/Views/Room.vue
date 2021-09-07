@@ -74,7 +74,7 @@
 <script>
 import DiceVue from '../components/Dice.vue';
 import Room from '../services/Room'
-import {Socket} from '../RoomLib/index'
+import {Socket} from '@iryu54/room-lib-front'
 export default {
   name: "Room",
   components: {
